@@ -35,7 +35,7 @@ const Home = () => {
   return (
     <div className="h-full pt-20 pb-[74px] overflow-hidden">
       {/* START: 헤더 영역 */}
-      <Header isLoggedIn={true} />
+      <Header isLoggedIn={true} />   
       {/* END: 헤더 영역 */}
       <main className="h-full overflow-auto">
         {/* TODO */}
@@ -44,8 +44,8 @@ const Home = () => {
           {/* START: 피드 영역 */}
           <ul>
             {feedList.map((feed) => (
-              <FeedItem
-                key={feed.id}
+              <FeedItem         // component다
+                key={feed._id}
                 data={feed}
                 tags={initialTags}
                 isAuthor={true}
