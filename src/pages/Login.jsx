@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "../components/InputField";
 import LoginButton from "../components/LoginButton";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
+// 미션: 이미 로그인된 사요자는 login 페이지 접근 불가
+// HOME페이지로 리다이렉트 시키기
+
 const Login = () => {
   // logic
   const history = useNavigate();
+  const currentUser = auth.currentUser;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,12 +21,16 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleInputChange = (inputValue, field) => {
+    console.log("🚀 ~ field:", field);
+    console.log("🚀 ~ inputValue:", inputValue);
     if (field === "email") {
       setEmail(inputValue);
     } else {
       setPassword(inputValue);
     }
   };
+
+  // 이미 로그인된 사용자는 login패이지 접근 불가
 
   const handleLogin = async (event) => {
     event.preventDefault(); // 폼 제출시 새로고침 방지 메소드
@@ -32,8 +40,8 @@ const Login = () => {
 
     // 로딩중이거나 사용자가 emaill, password값 작성 안하면 실행안함
     if (isLoading || !email || !password) return;
-    console.log("email", email);
-    console.log("password", password);
+    //console.log("email", email);
+    //console.log("password", password);
 
     setIsLoading(true);
     try {
@@ -70,6 +78,15 @@ const Login = () => {
     }
   };
 
+
+  useEffect(() => {
+    // 로그인 한 사용자는 홈 페이지로 이동
+    if (!!currentUser) {
+      history("/");
+    }
+  }, [history, currentUser]);
+
+
   // view
   return (
     <div className="h-full flex flex-col justify-center">
@@ -92,8 +109,9 @@ const Login = () => {
             field="password"
             onChange={handleInputChange}
           />
-          {/* errormessage 츠가 */}
-          {errorMessage && <p className="text-rd-600">{errorMessage}</p> }
+          {/* Error Message 추가  */}
+          {errorMessage && <p className="text-red-600">
+            {errorMessage}</p>}
           <LoginButton category="login" text="Login" />
         </form>
         {/* END: 폼 영역 */}
